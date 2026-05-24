@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Environment files - NEVER commit these
+.env
+.env.local
+.env.*.local
+backend/.env
+frontend/.env.local
+
+# Build outputs
+dist/
+.next/
+out/
+build/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Prisma
+backend/prisma/dev.db
+backend/prisma/dev.db-journal
+
+# Test coverage
+coverage/
