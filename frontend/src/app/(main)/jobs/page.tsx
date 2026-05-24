@@ -1,19 +1,17 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
-import { Briefcase, Clock, MapPin, DollarSign } from 'lucide-react';
+import { Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { Briefcase, MapPin } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import ListingCard from '@/components/marketplace/ListingCard';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useListings } from '@/hooks/useListings';
 import SearchBar from '@/components/marketplace/SearchBar';
-import { buildQueryString } from '@/lib/utils';
-import { useRouter } from 'next/navigation';
 
 const jobTypes = ['FULL_TIME', 'PART_TIME', 'CONTRACT', 'REMOTE', 'FREELANCE', 'INTERNSHIP'];
-const experienceLevels = ['Entry', 'Mid', 'Senior', 'Executive'];
 
-export default function JobsPage() {
+function JobsPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -38,7 +36,6 @@ export default function JobsPage() {
 
   return (
     <div className="min-h-screen pt-16">
-      {/* Hero */}
       <div className="bg-gradient-to-br from-brand-950 via-brand-900 to-gray-900 py-16 px-4">
         <div className="max-w-4xl mx-auto text-center mb-8">
           <Badge variant="brand" className="mb-4">
@@ -51,7 +48,6 @@ export default function JobsPage() {
         </div>
       </div>
 
-      {/* Filters */}
       <div className="border-b bg-card">
         <div className="max-w-7xl mx-auto px-4 py-4 overflow-x-auto">
           <div className="flex gap-2 min-w-max">
@@ -73,7 +69,6 @@ export default function JobsPage() {
         </div>
       </div>
 
-      {/* Listings */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -104,7 +99,7 @@ export default function JobsPage() {
           </div>
         ) : data?.listings?.length ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data.listings.map((listing) => (
+            {data.listings.map((listing: any) => (
               <ListingCard key={listing.id} listing={listing} />
             ))}
           </div>
@@ -117,5 +112,13 @@ export default function JobsPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function JobsPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen pt-16 flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500" /></div>}>
+      <JobsPageContent />
+    </Suspense>
   );
 }

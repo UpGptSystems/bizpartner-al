@@ -1,7 +1,8 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Building2, MapPin, BedDouble, Bath, Maximize } from 'lucide-react';
+import { Building2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import ListingCard from '@/components/marketplace/ListingCard';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -17,7 +18,7 @@ const dealTypes = [
 
 const propertyTypes = ['APARTMENT', 'HOUSE', 'VILLA', 'OFFICE', 'LAND', 'COMMERCIAL'];
 
-export default function RealEstatePage() {
+function RealEstatePageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -44,7 +45,6 @@ export default function RealEstatePage() {
 
   return (
     <div className="min-h-screen pt-16">
-      {/* Hero */}
       <div className="bg-gradient-to-br from-purple-950 via-purple-900 to-gray-900 py-16 px-4">
         <div className="max-w-4xl mx-auto text-center mb-8">
           <Badge className="mb-4 bg-purple-500/20 text-purple-300 border-purple-500/30">
@@ -57,7 +57,6 @@ export default function RealEstatePage() {
         </div>
       </div>
 
-      {/* Deal type filters */}
       <div className="border-b bg-card">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex flex-wrap gap-2 items-center">
@@ -94,7 +93,6 @@ export default function RealEstatePage() {
         </div>
       </div>
 
-      {/* Listings */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center justify-between mb-6">
           <h2 className="font-semibold">
@@ -117,7 +115,7 @@ export default function RealEstatePage() {
           </div>
         ) : data?.listings?.length ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data.listings.map((listing) => (
+            {data.listings.map((listing: any) => (
               <ListingCard key={listing.id} listing={listing} />
             ))}
           </div>
@@ -130,5 +128,13 @@ export default function RealEstatePage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function RealEstatePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen pt-16 flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500" /></div>}>
+      <RealEstatePageContent />
+    </Suspense>
   );
 }

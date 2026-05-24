@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { Suspense, useState, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { SlidersHorizontal, Grid3X3, List, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -10,7 +10,7 @@ import SearchBar from '@/components/marketplace/SearchBar';
 import ListingCard from '@/components/marketplace/ListingCard';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useListings, ListingFilters } from '@/hooks/useListings';
-import { cn, buildQueryString } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 
 const sortOptions = [
   { value: 'createdAt:desc', label: 'Newest First' },
@@ -20,7 +20,7 @@ const sortOptions = [
   { value: 'views:desc', label: 'Most Popular' },
 ];
 
-export default function ListingsPage() {
+function ListingsPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -57,7 +57,6 @@ export default function ListingsPage() {
 
   return (
     <div className="min-h-screen pt-16">
-      {/* Header */}
       <div className="border-b bg-card">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
@@ -105,7 +104,6 @@ export default function ListingsPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex flex-col lg:flex-row gap-6">
-          {/* Sidebar Filters */}
           {showFilters && (
             <aside className="w-full lg:w-64 flex-shrink-0">
               <div className="rounded-xl border bg-card p-5 space-y-6 sticky top-20">
@@ -119,7 +117,6 @@ export default function ListingsPage() {
                   )}
                 </div>
 
-                {/* Type */}
                 <div>
                   <label className="text-sm font-medium mb-2 block">Category</label>
                   <div className="space-y-1.5">
@@ -145,7 +142,6 @@ export default function ListingsPage() {
                   </div>
                 </div>
 
-                {/* Price Range */}
                 <div>
                   <label className="text-sm font-medium mb-2 block">Price Range</label>
                   <div className="flex gap-2">
@@ -166,7 +162,6 @@ export default function ListingsPage() {
                   </div>
                 </div>
 
-                {/* Location */}
                 <div>
                   <label className="text-sm font-medium mb-2 block">City</label>
                   <Input
@@ -176,7 +171,6 @@ export default function ListingsPage() {
                   />
                 </div>
 
-                {/* Featured */}
                 <div>
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
@@ -192,9 +186,7 @@ export default function ListingsPage() {
             </aside>
           )}
 
-          {/* Main content */}
           <div className="flex-1 min-w-0">
-            {/* Sort bar */}
             <div className="flex items-center justify-between mb-4">
               <div className="flex gap-2 flex-wrap">
                 {activeFilterCount > 0 && (
@@ -225,7 +217,6 @@ export default function ListingsPage() {
               </select>
             </div>
 
-            {/* Listings grid */}
             {isLoading ? (
               <div className={cn(
                 'grid gap-6',
@@ -248,7 +239,7 @@ export default function ListingsPage() {
                   'grid gap-6',
                   viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-3' : 'grid-cols-1'
                 )}>
-                  {data.listings.map((listing) => (
+                  {data.listings.map((listing: any) => (
                     <ListingCard
                       key={listing.id}
                       listing={listing}
@@ -257,7 +248,6 @@ export default function ListingsPage() {
                   ))}
                 </div>
 
-                {/* Pagination */}
                 {data.pagination.pages > 1 && (
                   <div className="flex justify-center gap-2 mt-10">
                     {Array.from({ length: data.pagination.pages }, (_, i) => i + 1).map((page) => (
@@ -287,5 +277,13 @@ export default function ListingsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ListingsPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen pt-16 flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500" /></div>}>
+      <ListingsPageContent />
+    </Suspense>
   );
 }

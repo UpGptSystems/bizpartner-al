@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Search, MapPin, SlidersHorizontal } from 'lucide-react';
+import { Search, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { motion } from 'framer-motion';
@@ -12,7 +12,7 @@ interface SearchBarProps {
   onSearch?: (query: string, location: string) => void;
 }
 
-export default function SearchBar({ variant = 'hero', onSearch }: SearchBarProps) {
+function SearchBarInner({ variant = 'hero', onSearch }: SearchBarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(searchParams.get('search') || '');
@@ -58,7 +58,6 @@ export default function SearchBar({ variant = 'hero', onSearch }: SearchBarProps
       transition={{ duration: 0.5, delay: 0.2 }}
       className="w-full max-w-3xl mx-auto"
     >
-      {/* Tab switcher */}
       <div className="flex gap-1 mb-3 bg-white/10 backdrop-blur-sm rounded-xl p-1 w-fit mx-auto">
         {(['ALL', 'JOB', 'REAL_ESTATE'] as const).map((tab) => (
           <button
@@ -75,7 +74,6 @@ export default function SearchBar({ variant = 'hero', onSearch }: SearchBarProps
         ))}
       </div>
 
-      {/* Search form */}
       <form
         onSubmit={handleSearch}
         className="flex flex-col sm:flex-row gap-2 bg-white/95 dark:bg-card rounded-2xl p-2 shadow-2xl"
@@ -109,5 +107,13 @@ export default function SearchBar({ variant = 'hero', onSearch }: SearchBarProps
         Thousands of listings in Albania and beyond
       </p>
     </motion.div>
+  );
+}
+
+export default function SearchBar(props: SearchBarProps) {
+  return (
+    <Suspense fallback={<div className="h-14 rounded-2xl bg-white/10 animate-pulse w-full max-w-3xl mx-auto" />}>
+      <SearchBarInner {...props} />
+    </Suspense>
   );
 }
