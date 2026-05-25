@@ -26,4 +26,4 @@ RUN mkdir -p logs && chown nexus:nodejs logs
 USER nexus
 
 EXPOSE 5000
-CMD ["sh", "-c", "npx prisma migrate deploy && npm start"]
+CMD ["sh", "-c", "npx prisma migrate deploy && npm run db:seed && npm start"]
