@@ -8,6 +8,7 @@ import ListingCard from '@/components/marketplace/ListingCard';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useListings } from '@/hooks/useListings';
 import SearchBar from '@/components/marketplace/SearchBar';
+import { mockJobs } from '@/lib/mockListings';
 
 const jobTypes = ['FULL_TIME', 'PART_TIME', 'CONTRACT', 'REMOTE', 'FREELANCE', 'INTERNSHIP'];
 
@@ -26,6 +27,7 @@ function JobsPageContent() {
   };
 
   const { data, isLoading } = useListings(filters);
+  const listings = data?.listings?.length ? data.listings : mockJobs;
 
   const updateFilter = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -73,7 +75,7 @@ function JobsPageContent() {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="font-semibold">
-              {data?.pagination.total?.toLocaleString() || 0} jobs found
+              {listings.length.toLocaleString()} jobs found
             </h2>
             {filters.city && (
               <p className="text-sm text-muted-foreground flex items-center gap-1 mt-0.5">
@@ -97,17 +99,11 @@ function JobsPageContent() {
               </div>
             ))}
           </div>
-        ) : data?.listings?.length ? (
+        ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data.listings.map((listing: any) => (
+            {listings.map((listing: any) => (
               <ListingCard key={listing.id} listing={listing} />
             ))}
-          </div>
-        ) : (
-          <div className="text-center py-20">
-            <Briefcase className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-            <h3 className="text-lg font-semibold mb-2">No jobs found</h3>
-            <p className="text-muted-foreground">Try different search terms or filters</p>
           </div>
         )}
       </div>

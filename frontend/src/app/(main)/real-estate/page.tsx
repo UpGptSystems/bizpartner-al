@@ -8,6 +8,7 @@ import ListingCard from '@/components/marketplace/ListingCard';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useListings } from '@/hooks/useListings';
 import SearchBar from '@/components/marketplace/SearchBar';
+import { mockRealEstate } from '@/lib/mockListings';
 
 const dealTypes = [
   { value: '', label: 'All' },
@@ -35,6 +36,7 @@ function RealEstatePageContent() {
   };
 
   const { data, isLoading } = useListings(filters);
+  const listings = data?.listings?.length ? data.listings : mockRealEstate;
 
   const updateFilter = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -96,7 +98,7 @@ function RealEstatePageContent() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center justify-between mb-6">
           <h2 className="font-semibold">
-            {data?.pagination.total?.toLocaleString() || 0} properties found
+            {listings.length.toLocaleString()} properties found
           </h2>
         </div>
 
@@ -113,17 +115,11 @@ function RealEstatePageContent() {
               </div>
             ))}
           </div>
-        ) : data?.listings?.length ? (
+        ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data.listings.map((listing: any) => (
+            {listings.map((listing: any) => (
               <ListingCard key={listing.id} listing={listing} />
             ))}
-          </div>
-        ) : (
-          <div className="text-center py-20">
-            <Building2 className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-            <h3 className="text-lg font-semibold mb-2">No properties found</h3>
-            <p className="text-muted-foreground">Try different search criteria</p>
           </div>
         )}
       </div>
