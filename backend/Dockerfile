@@ -21,9 +21,11 @@ COPY --from=builder --chown=nexus:nodejs /app/dist ./dist
 COPY --from=builder --chown=nexus:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=nexus:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nexus:nodejs /app/package.json ./
+COPY --chown=nexus:nodejs entrypoint.sh ./entrypoint.sh
 
 RUN mkdir -p logs && chown nexus:nodejs logs
+RUN chmod +x entrypoint.sh
 USER nexus
 
 EXPOSE 5000
-CMD ["sh", "-c", "npx prisma migrate deploy && npm run db:seed && npm start"]
+CMD ["./entrypoint.sh"]
